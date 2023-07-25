@@ -1,5 +1,10 @@
 package entities
 
+import (
+	"aviatoV2/database"
+	"github.com/gofiber/fiber/v2/log"
+)
+
 type Booking struct {
 	ID            int       `json:"id"`
 	BookingNumber string    `json:"bookingNumber"`
@@ -7,21 +12,45 @@ type Booking struct {
 	Passenger     Passenger `json:"passenger"`
 }
 
-/*
-func CreateResponseBooking(booking models.Booking) Booking {
-	var flight models.Flight
-	FindFlight(booking.FlightID, &flight)
-
-	var passenger models.Passenger
-	FindPassenger(booking.PassengerID, &passenger)
+func CreateResponseBooking(id int, bookingNumber string, flightID int, passengerID int) Booking {
 
 	return Booking{
-		ID:            booking.ID,
-		BookingNumber: booking.BookingNumber,
-		Flight:        CreateResponseFlight(flight),
-		Passenger:     CreateResponsePassenger(passenger),
+		ID:            id,
+		BookingNumber: bookingNumber,
+		Flight:        GetFlightByID(flightID),
+		Passenger:     GetPassengerByID(passengerID),
 	}
 }
+
+func GetBookingByID(ID int) Booking {
+
+	db := database.DB()
+	rows, err := db.Query("SELECT ID, BOOKING_NUMBER, FLIGHT_ID, PASSENGER_ID FROM bookings WHERE ID = ?", ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var (
+		id            int
+		bookingNumber string
+		flightID      int
+		passengerID   int
+	)
+
+	var booking Booking
+
+	for rows.Next() {
+		err := rows.Scan(&id, &bookingNumber, &flightID, &passengerID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		booking = CreateResponseBooking(id, bookingNumber, flightID, passengerID)
+
+	}
+	return booking
+}
+
+/*
+
 
 // CreateBooking in DB
 func CreateBooking(c *fiber.Ctx) error {

@@ -1,15 +1,48 @@
 package entities
 
+import (
+	"aviatoV2/database"
+	"github.com/gofiber/fiber/v2/log"
+)
+
 type Passenger struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
 	Passport string `json:"passport"`
 }
 
-/*
-func CreateResponsePassenger(passenger models.Passenger) Passenger {
-	return Passenger{ID: passenger.ID, Name: passenger.Name, Passport: passenger.Passport}
+func CreateResponsePassenger(id int, name string, passport string) Passenger {
+	return Passenger{ID: id, Name: name, Passport: passport}
 }
+
+func GetPassengerByID(ID int) Passenger {
+
+	db := database.DB()
+	rows, err := db.Query("SELECT ID, NAME, PASSPORT FROM passengers WHERE ID = ?", ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var (
+		id       int
+		name     string
+		passport string
+	)
+
+	var passenger Passenger
+
+	for rows.Next() {
+		err := rows.Scan(&id, &name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		passenger = CreateResponsePassenger(id, name, passport)
+
+	}
+	return passenger
+}
+
+/*
+
 
 func GetPassengerByID(id int) Passenger {
 	var passengerModel models.Passenger

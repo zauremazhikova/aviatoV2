@@ -1,32 +1,62 @@
 package entities
 
-import "time"
+import (
+	"aviatoV2/database"
+	"github.com/gofiber/fiber/v2/log"
+	"time"
+)
 
 type Flight struct {
 	ID            int       `json:"id"`
 	FlightNumber  string    `json:"flightNumber"`
-	Route         Route     `json:"route"`
+	Direction     Direction `json:"direction"`
 	DepartureTime time.Time `json:"departureTime"`
 	ArrivalTime   time.Time `json:"arrivalTime"`
 	SeatsNumber   int       `json:"seatsNumber"`
 	Price         float64   `json:"price"`
 }
 
-/*
-func CreateResponseFlight(flight models.Flight) Flight {
-	var route models.Route
-	FindRoute(flight.RouteID, &route)
+func CreateResponseFlight(id int, flightNumber string, directionID int, departureTime time.Time, arrivalTime time.Time, seatsNumber int, price float64) Flight {
 
 	return Flight{
-		ID:            flight.ID,
-		FlightNumber:  flight.FlightNumber,
-		Route:         CreateResponseRoute(route),
-		DepartureTime: flight.DepartureTime,
-		ArrivalTime:   flight.ArrivalTime,
-		SeatsNumber:   flight.SeatsNumber,
-		Price:         flight.Price}
+		ID:            id,
+		FlightNumber:  flightNumber,
+		Direction:     GetDirectionByID(directionID),
+		DepartureTime: departureTime,
+		ArrivalTime:   arrivalTime,
+		SeatsNumber:   seatsNumber,
+		Price:         price}
 }
 
+func GetFlightByID(ID int) Flight {
+	db := database.DB()
+	rows, err := db.Query("SELECT ID, FLIGHT_NUMBER, DIRECTION_ID, DEPARTURE_TIME, ARRIVAL_TIME, SEATS_NUMBER, PRICE FROM flights WHERE ID = ?", ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var (
+		id            int
+		flightNumber  string
+		directionID   int
+		departureTime time.Time
+		arrivalTime   time.Time
+		seatsNumber   int
+		price         float64
+	)
+
+	var city Flight
+	for rows.Next() {
+		err := rows.Scan(&id, &flightNumber, &directionID, &departureTime, &arrivalTime, &seatsNumber, &price)
+		if err != nil {
+			log.Fatal(err)
+		}
+		city = CreateResponseFlight(id, flightNumber, directionID, departureTime, arrivalTime, seatsNumber, price)
+
+	}
+	return city
+}
+
+/*
 func GetFlightByID(id int) Flight {
 	var flightModel models.Flight
 	FindFlight(id, &flightModel)

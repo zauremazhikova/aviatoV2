@@ -2,32 +2,38 @@ package handler
 
 import (
 	"aviatoV2/database"
-	"aviatoV2/entities"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"time"
 )
 
 func GetAllFlights(c *fiber.Ctx) error {
 	db := database.DB()
 	if db != nil {
-		rows, err := db.Query("SELECT * FROM flights")
+		rows, err := db.Query("SELECT ID, FLIGHT_NUMBER, DIRECTION_ID, DEPARTURE_TIME, ARRIVAL_TIME, COALESCE(SEATS_NUMBER, 0) AS SEATS_NUMBER, COALESCE(PRICE, 0) AS PRICE FROM flights")
 		//var flightsMap fiber.Map
 
-		flights := []entities.Flight{}
+		//flights := []entities.Flight{}
+
+		var (
+			id            int
+			flightNumber  string
+			directionID   int
+			departureTime time.Time
+			arrivalTime   time.Time
+			seatsNumber   int
+			price         float64
+		)
 
 		for rows.Next() {
-			flight := entities.Flight{}
-			err := rows.Scan(&flight.ID, &flight.FlightNumber, &flight.Route, &flight.DepartureTime,
-				&flight.ArrivalTime, &flight.SeatsNumber, &flight.Price)
+			//flight := entities.Flight{}
+			err := rows.Scan(&id, &flightNumber, &directionID, &departureTime, &arrivalTime, &seatsNumber, &price)
 			if err != nil {
 				fmt.Println(err)
 				continue
 			}
-			flights = append(flights, flight)
-		}
-		for _, flight := range flights {
-			fmt.Println(flight.ID, flight.FlightNumber, flight.Route, flight.DepartureTime,
-				flight.ArrivalTime, flight.SeatsNumber, flight.Price)
+			fmt.Println(id, flightNumber, directionID, departureTime, arrivalTime, seatsNumber, price)
+			//flights = append(flights, flight)
 		}
 		fmt.Println(err)
 		/*if err != nil {

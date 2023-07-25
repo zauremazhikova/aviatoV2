@@ -1,18 +1,47 @@
 package entities
 
+import (
+	"aviatoV2/database"
+	"github.com/gofiber/fiber/v2/log"
+)
+
 type City struct {
 	ID      int     `json:"id"`
 	Name    string  `json:"name"`
 	Country Country `json:"country"`
 }
 
-/*
-func CreateResponseCity(city models.City) City {
-	var country models.Country
-	FindCountry(city.CountryID, &country)
+func CreateResponseCity(id int, name string, countryID int) City {
 
-	return City{ID: city.ID, Name: city.Name, Country: CreateResponseCountry(country)}
+	return City{ID: id, Name: name, Country: GetCountryByID(countryID)}
 }
+
+func GetCityByID(ID int) City {
+	db := database.DB()
+	rows, err := db.Query("SELECT ID, NAME, COUNTRY_ID FROM cities WHERE ID = ?", ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var (
+		id        int
+		name      string
+		countryID int
+	)
+
+	var city City
+	for rows.Next() {
+		err := rows.Scan(&id, &name, &countryID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		city = CreateResponseCity(id, name, countryID)
+
+	}
+	return city
+}
+
+/*
+
 
 func GetCityByID(id int) City {
 	var cityModel models.City

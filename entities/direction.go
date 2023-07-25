@@ -1,29 +1,51 @@
 package entities
 
-type Route struct {
+import (
+	"aviatoV2/database"
+	"github.com/gofiber/fiber/v2/log"
+)
+
+type Direction struct {
 	ID              int     `json:"id"`
 	OriginCity      City    `json:"originCity"`
 	DestinationCity City    `json:"destinationCity"`
 	Airline         Airline `json:"airline"`
 }
 
-/*
-func CreateResponseRoute(route models.Route) Route {
-	var originCity models.City
-	var destinationCity models.City
-	var airline models.Airline
-
-	FindCity(route.OriginCityID, &originCity)
-	FindCity(route.DestinationCityID, &destinationCity)
-	FindAirline(route.AirlineID, &airline)
-
-	return Route{
-		ID:              route.ID,
-		OriginCity:      CreateResponseCity(originCity),
-		DestinationCity: CreateResponseCity(destinationCity),
-		Airline:         CreateResponseAirline(airline)}
+func CreateResponseDirection(id int, originCityID int, destinationCityID int, airlineID int) Direction {
+	return Direction{
+		ID:              id,
+		OriginCity:      GetCityByID(originCityID),
+		DestinationCity: GetCityByID(destinationCityID),
+		Airline:         GetAirlineByID(airlineID)}
 }
 
+func GetDirectionByID(ID int) Direction {
+	db := database.DB()
+	rows, err := db.Query("SELECT ID, ORIGIN_CITY_ID, DESTINATION_CITY_ID, AIRLINE_ID FROM destination WHERE ID = ?", ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var (
+		id                int
+		originCityID      int
+		destinationCityID int
+		airlineCityID     int
+	)
+
+	var city Direction
+	for rows.Next() {
+		err := rows.Scan(&id, &originCityID, &destinationCityID, &airlineCityID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		city = CreateResponseDirection(id, originCityID, destinationCityID, airlineCityID)
+
+	}
+	return city
+}
+
+/*
 func GetRouteByID(id int) Route {
 	var routeModel models.Route
 	FindRoute(id, &routeModel)
