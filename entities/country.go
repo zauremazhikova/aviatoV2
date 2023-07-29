@@ -3,35 +3,48 @@ package entities
 import (
 	"aviatoV2/database"
 	"github.com/gofiber/fiber/v2/log"
+	"time"
 )
 
 type Country struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
-func CreateResponseCountry(id int, name string) Country {
-	return Country{ID: id, Name: name}
+func CreateResponseCountry(id int, name string, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Country {
+	return Country{
+		ID:        id,
+		Name:      name,
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
+		DeletedAt: deletedAt,
+	}
 }
 
 func GetCountryByID(countryID int) Country {
 	db := database.DB()
-	rows, err := db.Query("SELECT ID, NAME FROM countries WHERE ID = ?", countryID)
+	rows, err := db.Query("SELECT ID, NAME, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM countries WHERE ID = $1", countryID)
 	if err != nil {
 		log.Fatal(err)
 	}
 	var (
-		id   int
-		name string
+		id        int
+		name      string
+		createdAt time.Time
+		updatedAt time.Time
+		deletedAt time.Time
 	)
 
 	var country Country
 	for rows.Next() {
-		err := rows.Scan(&id, &name)
+		err := rows.Scan(&id, &name, &createdAt, &updatedAt, &deletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		country = CreateResponseCountry(id, name)
+		country = CreateResponseCountry(id, name, createdAt, updatedAt, deletedAt)
 
 	}
 	return country

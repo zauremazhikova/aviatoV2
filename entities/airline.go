@@ -1,45 +1,58 @@
 package entities
 
 import (
-	"aviatoV2/database"
-	"github.com/gofiber/fiber/v2/log"
+	"time"
 )
 
 type Airline struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
-func CreateResponseAirline(id int, name string) Airline {
-	return Airline{ID: id, Name: name}
+func CreateResponseAirline(id int, name string, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Airline {
+	return Airline{
+		ID:        id,
+		Name:      name,
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
+		DeletedAt: deletedAt,
+	}
 }
+
+/*
 
 func GetAirlineByID(airlineID int) Airline {
 
 	db := database.DB()
-	rows, err := db.Query("SELECT ID, NAME FROM airlines WHERE ID = ?", airlineID)
+	rows, err := db.Query("SELECT ID, NAME, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM airlines WHERE ID = $1", airlineID)
 	if err != nil {
 		log.Fatal(err)
 	}
 	var (
-		id   int
-		name string
+		id        int
+		name      string
+		createdAt time.Time
+		updatedAt time.Time
+		deletedAt time.Time
 	)
 
 	var airline Airline
 
 	for rows.Next() {
-		err := rows.Scan(&id, &name)
+		err := rows.Scan(&id, &name, &createdAt, &updatedAt, &deletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		airline = CreateResponseAirline(id, name)
+		airline = CreateResponseAirline(id, name, createdAt, updatedAt, deletedAt)
 
 	}
 	return airline
 }
 
-/*
+
 
 
 

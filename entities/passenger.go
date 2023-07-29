@@ -3,39 +3,53 @@ package entities
 import (
 	"aviatoV2/database"
 	"github.com/gofiber/fiber/v2/log"
+	"time"
 )
 
 type Passenger struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Passport string `json:"passport"`
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	Passport  string    `json:"passport"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
-func CreateResponsePassenger(id int, name string, passport string) Passenger {
-	return Passenger{ID: id, Name: name, Passport: passport}
+func CreateResponsePassenger(id int, name string, passport string, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Passenger {
+	return Passenger{
+		ID:        id,
+		Name:      name,
+		Passport:  passport,
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
+		DeletedAt: deletedAt,
+	}
 }
 
 func GetPassengerByID(ID int) Passenger {
 
 	db := database.DB()
-	rows, err := db.Query("SELECT ID, NAME, PASSPORT FROM passengers WHERE ID = ?", ID)
+	rows, err := db.Query("SELECT ID, NAME, PASSPORT, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM passengers WHERE ID = $1", ID)
 	if err != nil {
 		log.Fatal(err)
 	}
 	var (
-		id       int
-		name     string
-		passport string
+		id        int
+		name      string
+		passport  string
+		createdAt time.Time
+		updatedAt time.Time
+		deletedAt time.Time
 	)
 
 	var passenger Passenger
 
 	for rows.Next() {
-		err := rows.Scan(&id, &name)
+		err := rows.Scan(&id, &name, &createdAt, &updatedAt, &deletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		passenger = CreateResponsePassenger(id, name, passport)
+		passenger = CreateResponsePassenger(id, name, passport, createdAt, updatedAt, deletedAt)
 
 	}
 	return passenger

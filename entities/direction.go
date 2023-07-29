@@ -3,26 +3,34 @@ package entities
 import (
 	"aviatoV2/database"
 	"github.com/gofiber/fiber/v2/log"
+	"time"
 )
 
 type Direction struct {
-	ID              int     `json:"id"`
-	OriginCity      City    `json:"originCity"`
-	DestinationCity City    `json:"destinationCity"`
-	Airline         Airline `json:"airline"`
+	ID              int       `json:"id"`
+	OriginCity      City      `json:"originCity"`
+	DestinationCity City      `json:"destinationCity"`
+	Airline         Airline   `json:"airline"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	DeletedAt       time.Time `json:"deleted_at"`
 }
 
-func CreateResponseDirection(id int, originCityID int, destinationCityID int, airlineID int) Direction {
+func CreateResponseDirection(id int, originCityID int, destinationCityID int, airlineID int, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Direction {
 	return Direction{
 		ID:              id,
 		OriginCity:      GetCityByID(originCityID),
 		DestinationCity: GetCityByID(destinationCityID),
-		Airline:         GetAirlineByID(airlineID)}
+		Airline:         GetAirlineByID(airlineID),
+		CreatedAt:       createdAt,
+		UpdatedAt:       updatedAt,
+		DeletedAt:       deletedAt,
+	}
 }
 
 func GetDirectionByID(ID int) Direction {
 	db := database.DB()
-	rows, err := db.Query("SELECT ID, ORIGIN_CITY_ID, DESTINATION_CITY_ID, AIRLINE_ID FROM destination WHERE ID = ?", ID)
+	rows, err := db.Query("SELECT ID, ORIGIN_CITY_ID, DESTINATION_CITY_ID, AIRLINE_ID, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM destination WHERE ID = $1", ID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,18 +39,21 @@ func GetDirectionByID(ID int) Direction {
 		originCityID      int
 		destinationCityID int
 		airlineCityID     int
+		createdAt         time.Time
+		updatedAt         time.Time
+		deletedAt         time.Time
 	)
 
-	var city Direction
+	var direction Direction
 	for rows.Next() {
-		err := rows.Scan(&id, &originCityID, &destinationCityID, &airlineCityID)
+		err := rows.Scan(&id, &originCityID, &destinationCityID, &airlineCityID, &createdAt, &updatedAt, &deletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		city = CreateResponseDirection(id, originCityID, destinationCityID, airlineCityID)
+		direction = CreateResponseDirection(id, originCityID, destinationCityID, airlineCityID, createdAt, updatedAt, deletedAt)
 
 	}
-	return city
+	return direction
 }
 
 /*

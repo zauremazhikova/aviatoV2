@@ -14,10 +14,12 @@ type Flight struct {
 	ArrivalTime   time.Time `json:"arrivalTime"`
 	SeatsNumber   int       `json:"seatsNumber"`
 	Price         float64   `json:"price"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	DeletedAt     time.Time `json:"deleted_at"`
 }
 
-func CreateResponseFlight(id int, flightNumber string, directionID int, departureTime time.Time, arrivalTime time.Time, seatsNumber int, price float64) Flight {
-
+func CreateResponseFlight(id int, flightNumber string, directionID int, departureTime time.Time, arrivalTime time.Time, seatsNumber int, price float64, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Flight {
 	return Flight{
 		ID:            id,
 		FlightNumber:  flightNumber,
@@ -25,12 +27,16 @@ func CreateResponseFlight(id int, flightNumber string, directionID int, departur
 		DepartureTime: departureTime,
 		ArrivalTime:   arrivalTime,
 		SeatsNumber:   seatsNumber,
-		Price:         price}
+		Price:         price,
+		CreatedAt:     createdAt,
+		UpdatedAt:     updatedAt,
+		DeletedAt:     deletedAt,
+	}
 }
 
-func GetFlightByID(ID int) Flight {
+func GetFlightByID(flightID int) Flight {
 	db := database.DB()
-	rows, err := db.Query("SELECT ID, FLIGHT_NUMBER, DIRECTION_ID, DEPARTURE_TIME, ARRIVAL_TIME, SEATS_NUMBER, PRICE FROM flights WHERE ID = ?", ID)
+	rows, err := db.Query("SELECT ID, FLIGHT_NUMBER, DIRECTION_ID, DEPARTURE_TIME, ARRIVAL_TIME, COALESCE(SEATS_NUMBER, 0) AS SEATS_NUMBER, COALESCE(PRICE, 0) AS PRICE, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM flights WHERE ID = $1", flightID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,18 +48,20 @@ func GetFlightByID(ID int) Flight {
 		arrivalTime   time.Time
 		seatsNumber   int
 		price         float64
+		createdAt     time.Time
+		updatedAt     time.Time
+		deletedAt     time.Time
 	)
 
-	var city Flight
+	var flight Flight
 	for rows.Next() {
-		err := rows.Scan(&id, &flightNumber, &directionID, &departureTime, &arrivalTime, &seatsNumber, &price)
+		err := rows.Scan(&id, &flightNumber, &directionID, &departureTime, &arrivalTime, &seatsNumber, &price, &createdAt, &updatedAt, &deletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		city = CreateResponseFlight(id, flightNumber, directionID, departureTime, arrivalTime, seatsNumber, price)
-
+		flight = CreateResponseFlight(id, flightNumber, directionID, departureTime, arrivalTime, seatsNumber, price, createdAt, updatedAt, deletedAt)
 	}
-	return city
+	return flight
 }
 
 /*

@@ -3,6 +3,7 @@ package entities
 import (
 	"aviatoV2/database"
 	"github.com/gofiber/fiber/v2/log"
+	"time"
 )
 
 type Booking struct {
@@ -10,22 +11,28 @@ type Booking struct {
 	BookingNumber string    `json:"bookingNumber"`
 	Flight        Flight    `json:"flight"`
 	Passenger     Passenger `json:"passenger"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	DeletedAt     time.Time `json:"deleted_at"`
 }
 
-func CreateResponseBooking(id int, bookingNumber string, flightID int, passengerID int) Booking {
+func CreateResponseBooking(id int, bookingNumber string, flightID int, passengerID int, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Booking {
 
 	return Booking{
 		ID:            id,
 		BookingNumber: bookingNumber,
 		Flight:        GetFlightByID(flightID),
 		Passenger:     GetPassengerByID(passengerID),
+		CreatedAt:     createdAt,
+		UpdatedAt:     updatedAt,
+		DeletedAt:     deletedAt,
 	}
 }
 
 func GetBookingByID(ID int) Booking {
 
 	db := database.DB()
-	rows, err := db.Query("SELECT ID, BOOKING_NUMBER, FLIGHT_ID, PASSENGER_ID FROM bookings WHERE ID = ?", ID)
+	rows, err := db.Query("SELECT ID, BOOKING_NUMBER, FLIGHT_ID, PASSENGER_ID, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM bookings WHERE ID = $1", ID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,16 +41,19 @@ func GetBookingByID(ID int) Booking {
 		bookingNumber string
 		flightID      int
 		passengerID   int
+		createdAt     time.Time
+		updatedAt     time.Time
+		deletedAt     time.Time
 	)
 
 	var booking Booking
 
 	for rows.Next() {
-		err := rows.Scan(&id, &bookingNumber, &flightID, &passengerID)
+		err := rows.Scan(&id, &bookingNumber, &flightID, &passengerID, &createdAt, &updatedAt, &deletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		booking = CreateResponseBooking(id, bookingNumber, flightID, passengerID)
+		booking = CreateResponseBooking(id, bookingNumber, flightID, passengerID, createdAt, updatedAt, deletedAt)
 
 	}
 	return booking

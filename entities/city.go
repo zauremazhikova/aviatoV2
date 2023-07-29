@@ -3,22 +3,33 @@ package entities
 import (
 	"aviatoV2/database"
 	"github.com/gofiber/fiber/v2/log"
+	"time"
 )
 
 type City struct {
-	ID      int     `json:"id"`
-	Name    string  `json:"name"`
-	Country Country `json:"country"`
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	Country   Country   `json:"country"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
-func CreateResponseCity(id int, name string, countryID int) City {
+func CreateResponseCity(id int, name string, countryID int, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) City {
 
-	return City{ID: id, Name: name, Country: GetCountryByID(countryID)}
+	return City{
+		ID:        id,
+		Name:      name,
+		Country:   GetCountryByID(countryID),
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
+		DeletedAt: deletedAt,
+	}
 }
 
 func GetCityByID(ID int) City {
 	db := database.DB()
-	rows, err := db.Query("SELECT ID, NAME, COUNTRY_ID FROM cities WHERE ID = ?", ID)
+	rows, err := db.Query("SELECT ID, NAME, COUNTRY_ID, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM cities WHERE ID = $1", ID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,15 +37,18 @@ func GetCityByID(ID int) City {
 		id        int
 		name      string
 		countryID int
+		createdAt time.Time
+		updatedAt time.Time
+		deletedAt time.Time
 	)
 
 	var city City
 	for rows.Next() {
-		err := rows.Scan(&id, &name, &countryID)
+		err := rows.Scan(&id, &name, &countryID, &createdAt, &updatedAt, &deletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		city = CreateResponseCity(id, name, countryID)
+		city = CreateResponseCity(id, name, countryID, createdAt, updatedAt, deletedAt)
 
 	}
 	return city
