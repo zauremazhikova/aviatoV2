@@ -71,7 +71,7 @@ func UpdateInDB(country *Country) error {
 
 func DeleteInDB(id string) error {
 	db := database.DB()
-	_, dbErr := db.Query("DELETE FROM countries WHERE id = $1", id)
+	_, dbErr := db.Query("UPDATE countries SET deleted_at = $1 WHERE id = $2", time.Now(), id)
 
 	if dbErr != nil {
 		return dbErr

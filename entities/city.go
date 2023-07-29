@@ -1,9 +1,6 @@
 package entities
 
-import (
-	"time"
-)
-
+/*
 type City struct {
 	ID        int       `json:"id"`
 	Name      string    `json:"name"`
@@ -13,7 +10,7 @@ type City struct {
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
-/*
+
 func CreateResponseCity(id int, name string, countryID int, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) City {
 
 	return City{

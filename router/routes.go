@@ -2,6 +2,8 @@ package router
 
 import (
 	"aviatoV2/entities/airline"
+	"aviatoV2/entities/city"
+	"aviatoV2/entities/country"
 	"aviatoV2/handlers"
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,10 +13,11 @@ func SetupRoutes(app *fiber.App) {
 	// grouping
 	api := app.Group("/api")
 	airlines := api.Group("/airline")
-	country := api.Group("/country")
+	countries := api.Group("/country")
+	cities := api.Group("/city")
+
 	/*	booking := api.Group("/booking")
-		bookingStatus := api.Group("/bookingStatus")
-		city := api.Group("/city")
+
 		flight := api.Group("/flight")
 		passenger := api.Group("/passenger")
 		route := api.Group("/route")*/
@@ -30,23 +33,20 @@ func SetupRoutes(app *fiber.App) {
 	airlines.Delete("/:id", airline.Delete)
 
 	// country
-	//country.Get("/", country.G)
-	//country.Get("/:id", country.GetSingleCountry)
-	//country.Post("/", country.CreateCountry)
-	//country.Put("/:id", country.UpdateCountry)
-	//country.Delete("/:id", country.DeleteCountryByID)
+	countries.Get("/", country.GetAll)
+	countries.Get("/:id", country.GetSingle)
+	countries.Post("/", country.Create)
+	countries.Put("/:id", country.Update)
+	countries.Delete("/:id", country.Delete)
+
+	// city
+	cities.Get("/", city.GetAll)
+	cities.Get("/:id", city.GetSingle)
+	cities.Post("/", city.Create)
+	cities.Put("/:id", city.Update)
+	cities.Delete("/:id", city.Delete)
 
 	/*
-
-
-		// city
-		city.Get("/", Entities.GetAllCities)
-		city.Get("/:id", Entities.GetSingleCity)
-		city.Post("/", Entities.CreateCity)
-		city.Put("/:id", Entities.UpdateCity)
-		city.Delete("/:id", Entities.DeleteCityByID)
-
-
 
 		// passenger
 		passenger.Get("/", Entities.GetAllPassengers)

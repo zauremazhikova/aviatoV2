@@ -2,12 +2,6 @@ package config
 
 const (
 	FlightStopMaxNumber = 5
-
-	DbHost     = "localhost"
-	DbPort     = 8080
-	DbName     = "aviato"
-	DbUser     = "postgres"
-	DbPassword = "778977"
 )
 
 type StorageConfig struct {
@@ -21,10 +15,11 @@ type StorageConfig struct {
 func GetConfig() StorageConfig {
 
 	return StorageConfig{
-		Host:     DbHost,
-		Port:     DbPort,
-		Database: DbName,
-		Username: DbUser,
-		Password: DbPassword,
+		Host:     "localhost",
+		Port:     8080,
+		Database: "aviato",
+		Username: "postgres",
+		Password: "778977",
 	}
+
 }

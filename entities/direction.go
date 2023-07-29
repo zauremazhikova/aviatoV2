@@ -1,17 +1,18 @@
 package entities
 
 import (
+	"aviatoV2/entities/airline"
 	"time"
 )
 
 type Direction struct {
-	ID              int       `json:"id"`
-	OriginCity      City      `json:"originCity"`
-	DestinationCity City      `json:"destinationCity"`
-	Airline         Airline   `json:"airline"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
-	DeletedAt       time.Time `json:"deleted_at"`
+	ID              int             `json:"id"`
+	OriginCity      City            `json:"originCity"`
+	DestinationCity City            `json:"destinationCity"`
+	Airline         airline.Airline `json:"airline"`
+	CreatedAt       time.Time       `json:"created_at"`
+	UpdatedAt       time.Time       `json:"updated_at"`
+	DeletedAt       time.Time       `json:"deleted_at"`
 }
 
 /*
