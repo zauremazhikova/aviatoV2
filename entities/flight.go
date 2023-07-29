@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"aviatoV2/database"
-	"github.com/gofiber/fiber/v2/log"
 	"time"
 )
 
@@ -19,6 +17,7 @@ type Flight struct {
 	DeletedAt     time.Time `json:"deleted_at"`
 }
 
+/*
 func CreateResponseFlight(id int, flightNumber string, directionID int, departureTime time.Time, arrivalTime time.Time, seatsNumber int, price float64, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Flight {
 	return Flight{
 		ID:            id,
@@ -64,7 +63,7 @@ func GetFlightByID(flightID int) Flight {
 	return flight
 }
 
-/*
+
 func GetFlightByID(id int) Flight {
 	var flightModel models.Flight
 	FindFlight(id, &flightModel)

@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"aviatoV2/database"
-	"github.com/gofiber/fiber/v2/log"
 	"time"
 )
 
@@ -14,6 +12,7 @@ type Country struct {
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
+/*
 func CreateResponseCountry(id int, name string, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Country {
 	return Country{
 		ID:        id,
@@ -50,7 +49,7 @@ func GetCountryByID(countryID int) Country {
 	return country
 }
 
-/*
+
 func GetCountryByID(id int) Country {
 	var countryModel models.Country
 	FindCountry(id, &countryModel)

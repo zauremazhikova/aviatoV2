@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"aviatoV2/database"
-	"github.com/gofiber/fiber/v2/log"
 	"time"
 )
 
@@ -16,6 +14,7 @@ type Direction struct {
 	DeletedAt       time.Time `json:"deleted_at"`
 }
 
+/*
 func CreateResponseDirection(id int, originCityID int, destinationCityID int, airlineID int, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Direction {
 	return Direction{
 		ID:              id,
@@ -56,7 +55,7 @@ func GetDirectionByID(ID int) Direction {
 	return direction
 }
 
-/*
+
 func GetRouteByID(id int) Route {
 	var routeModel models.Route
 	FindRoute(id, &routeModel)

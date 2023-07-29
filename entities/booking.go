@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"aviatoV2/database"
-	"github.com/gofiber/fiber/v2/log"
 	"time"
 )
 
@@ -16,6 +14,7 @@ type Booking struct {
 	DeletedAt     time.Time `json:"deleted_at"`
 }
 
+/*
 func CreateResponseBooking(id int, bookingNumber string, flightID int, passengerID int, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) Booking {
 
 	return Booking{
@@ -59,7 +58,7 @@ func GetBookingByID(ID int) Booking {
 	return booking
 }
 
-/*
+
 
 
 // CreateBooking in DB

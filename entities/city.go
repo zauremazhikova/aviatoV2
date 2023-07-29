@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"aviatoV2/database"
-	"github.com/gofiber/fiber/v2/log"
 	"time"
 )
 
@@ -15,6 +13,7 @@ type City struct {
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
+/*
 func CreateResponseCity(id int, name string, countryID int, createdAt time.Time, updatedAt time.Time, deletedAt time.Time) City {
 
 	return City{
@@ -54,7 +53,7 @@ func GetCityByID(ID int) City {
 	return city
 }
 
-/*
+
 
 
 func GetCityByID(id int) City {
