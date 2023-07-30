@@ -5,6 +5,7 @@ import (
 	"aviatoV2/entities/flight"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"slices"
 	"time"
 )
 
@@ -21,44 +22,52 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
-	flightsMap := make([][]*flight.Flight, 0)
-	//flights := make([]*flight.Flight, 0)
 
-	//FindFlightVariants(searchData.OriginCityID, searchData.DirectionID, config.FlightStopMaxNumber, flightsMap, flights)
-	fmt.Println(flightsMap)
+	findFlightVariants("1", "3", config.FlightStopMaxNumber, make([]*flight.Flight, 0), make([]string, 0))
 
 	return nil
 }
 
 func FindFlightVariants() {
-
-	flights := make([]*flight.Flight, 0)
-	res := findFlightVariants("1", "3", config.FlightStopMaxNumber, flights)
-	fmt.Println(FlightsMap, res)
-
+	findFlightVariants("1", "3", config.FlightStopMaxNumber, make([]*flight.Flight, 0), make([]string, 0))
+	fmt.Println(FlightsMap)
 }
 
-func findFlightVariants(originCityID string, destinationCityID string, stops int, flights []*flight.Flight) bool {
+func findFlightVariants(originCityID string, destinationCityID string, stops int, flights []*flight.Flight, citiesID []string) {
+
+	contains := slices.Contains(citiesID, originCityID)
+	correctTime := true
+	n := len(flights)
+	if n > 1 {
+		flight1 := flights[n-1]
+		flight2 := flights[n-2]
+		if flight1.DepartureTime.Before(flight2.ArrivalTime) {
+			correctTime = false
+		} else {
+			diff := flight1.DepartureTime.Sub(flight2.ArrivalTime)
+			fmt.Println(diff)
+		}
+	}
 
 	if originCityID == destinationCityID {
-		return true
-	} else if stops <= 0 {
-		return false
+		FlightsMap = append(FlightsMap, flights)
+		return
+	} else if stops <= 0 || contains == true || correctTime == false {
+		flights = nil
+		return
 	}
 
 	nextFlights, err := flight.GetFlightsByOriginCityFromDB(originCityID)
 	if err != nil {
-		return false
+		return
 	}
 
 	for i := 0; i < len(nextFlights); i++ {
 		currentFlight := nextFlights[i]
 		flights = append(flights, currentFlight)
-		res := findFlightVariants(currentFlight.Direction.DestinationCity.ID, destinationCityID, stops-1, flights)
-		if res == true {
-			FlightsMap = append(FlightsMap, flights)
-		}
+		citiesID = append(citiesID, originCityID)
+		findFlightVariants(currentFlight.Direction.DestinationCity.ID, destinationCityID, stops-1, flights, citiesID)
+		flights = flights[:len(flights)-1]
 	}
-	return false
-
+	return
 }
