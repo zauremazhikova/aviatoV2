@@ -6,16 +6,15 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"slices"
-	"time"
 )
 
 var FlightsMap [][]*flight.Flight
 
 func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
+	FlightsMap = make([][]*flight.Flight, 0)
 	type searchStruct struct {
-		OriginCityID  string    `json:"originCityID"`
-		DirectionID   string    `json:"destinationCityID"`
-		DepartureTime time.Time `json:"departureTime"`
+		OriginCityID string `json:"originCityID"`
+		DirectionID  string `json:"destinationCityID"`
 	}
 	var searchData searchStruct
 	err := c.BodyParser(&searchData)
@@ -23,9 +22,9 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
-	findFlightVariants("1", "3", config.FlightStopMaxNumber, make([]*flight.Flight, 0), make([]string, 0))
+	findFlightVariants(searchData.OriginCityID, searchData.DirectionID, config.FlightStopMaxNumber, make([]*flight.Flight, 0), make([]string, 0))
 
-	return nil
+	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Flights Found", "data": FlightsMap})
 }
 
 func FindFlightVariants() {
@@ -36,23 +35,11 @@ func FindFlightVariants() {
 func findFlightVariants(originCityID string, destinationCityID string, stops int, flights []*flight.Flight, citiesID []string) {
 
 	contains := slices.Contains(citiesID, originCityID)
-	correctTime := true
-	n := len(flights)
-	if n > 1 {
-		flight1 := flights[n-1]
-		flight2 := flights[n-2]
-		if flight1.DepartureTime.Before(flight2.ArrivalTime) {
-			correctTime = false
-		} else {
-			diff := flight1.DepartureTime.Sub(flight2.ArrivalTime)
-			fmt.Println(diff)
-		}
-	}
 
 	if originCityID == destinationCityID {
 		FlightsMap = append(FlightsMap, flights)
 		return
-	} else if stops <= 0 || contains == true || correctTime == false {
+	} else if stops <= 0 || contains == true {
 		flights = nil
 		return
 	}
