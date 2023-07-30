@@ -2,9 +2,11 @@ package router
 
 import (
 	"aviatoV2/entities/airline"
+	"aviatoV2/entities/booking"
 	"aviatoV2/entities/city"
 	"aviatoV2/entities/country"
 	"aviatoV2/entities/direction"
+	"aviatoV2/entities/flight"
 	"aviatoV2/entities/passenger"
 	"aviatoV2/handlers"
 	"github.com/gofiber/fiber/v2"
@@ -19,9 +21,8 @@ func SetupRoutes(app *fiber.App) {
 	cities := api.Group("/city")
 	passengers := api.Group("/passenger")
 	directions := api.Group("/direction")
-
-	/*	booking := api.Group("/booking")
-		flight := api.Group("/flight")*/
+	flights := api.Group("/flight")
+	bookings := api.Group("/booking")
 
 	// main
 	api.Get("/", handlers.GetAllFlights)
@@ -60,5 +61,19 @@ func SetupRoutes(app *fiber.App) {
 	directions.Post("/", direction.Create)
 	directions.Put("/:id", direction.Update)
 	directions.Delete("/:id", direction.Delete)
+
+	// flight
+	flights.Get("/", flight.GetAll)
+	flights.Get("/:id", flight.GetSingle)
+	flights.Post("/", flight.Create)
+	flights.Put("/:id", flight.Update)
+	flights.Delete("/:id", flight.Delete)
+
+	// booking
+	bookings.Get("/", booking.GetAll)
+	bookings.Get("/:id", booking.GetSingle)
+	bookings.Post("/", booking.Create)
+	bookings.Put("/:id", booking.Update)
+	bookings.Delete("/:id", booking.Delete)
 
 }

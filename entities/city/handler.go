@@ -36,14 +36,13 @@ func Create(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
-	city := new(City)
-	city.Name = insertData.Name
 	currentCountry, _ := country.GetSingleFromDB(insertData.CountryID)
-
 	if currentCountry.ID == 0 {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Country not found", "data": err})
 	}
 
+	city := new(City)
+	city.Name = insertData.Name
 	city.Country = *currentCountry
 
 	err = CreateInDB(city)
@@ -55,7 +54,8 @@ func Create(c *fiber.Ctx) error {
 
 func Update(c *fiber.Ctx) error {
 	type updateStruct struct {
-		Name string `json:"name"`
+		Name      string `json:"name"`
+		CountryID string `json:"countryID"`
 	}
 	id := c.Params("id")
 	city, err := GetSingleFromDB(id)
@@ -70,7 +70,14 @@ func Update(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
+	currentCountry, _ := country.GetSingleFromDB(updateData.CountryID)
+	if currentCountry.ID == 0 {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Country not found", "data": err})
+	}
+
 	city.Name = updateData.Name
+	city.Country = *currentCountry
+
 	err = UpdateInDB(city)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "City has not updated", "data": err})
