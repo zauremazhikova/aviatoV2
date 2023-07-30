@@ -3,6 +3,7 @@ package city
 import (
 	"aviatoV2/database"
 	"aviatoV2/entities/country"
+	"fmt"
 	"github.com/gofiber/fiber/v2/log"
 	"time"
 )
@@ -21,6 +22,7 @@ func GetAllFromDB() (a []*City, err error) {
 		var countryID string
 		err := rows.Scan(&city.ID, &city.Name, &countryID, &city.CreatedAt, &city.UpdatedAt, &city.DeletedAt)
 		if err != nil {
+			fmt.Println(err)
 			return cities, err
 		} else {
 			currentCountry, _ := country.GetSingleFromDB(countryID)
@@ -56,7 +58,7 @@ func GetSingleFromDB(id string) (*City, error) {
 
 func CreateInDB(city *City) error {
 	db := database.DB()
-	_, dbErr := db.Query("INSERT INTO cities (name, created_at) VALUES ($1, $2)", city.Name, time.Now())
+	_, dbErr := db.Query("INSERT INTO cities (name, country_id, created_at) VALUES ($1, $2, $3)", city.Name, city.Country.ID, time.Now())
 
 	if dbErr != nil {
 		return dbErr
@@ -67,7 +69,7 @@ func CreateInDB(city *City) error {
 
 func UpdateInDB(city *City) error {
 	db := database.DB()
-	_, dbErr := db.Query("UPDATE cities SET name = $1, updated_at = $2 WHERE id = $3", city.Name, time.Now(), city.ID)
+	_, dbErr := db.Query("UPDATE cities SET name = $2, updated_at = $3 WHERE id = $1", city.ID, city.Name, time.Now())
 
 	if dbErr != nil {
 		return dbErr

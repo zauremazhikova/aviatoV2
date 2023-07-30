@@ -1,6 +1,9 @@
 package city
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"aviatoV2/entities/country"
+	"github.com/gofiber/fiber/v2"
+)
 
 func GetAll(c *fiber.Ctx) error {
 
@@ -22,12 +25,27 @@ func GetSingle(c *fiber.Ctx) error {
 }
 
 func Create(c *fiber.Ctx) error {
-	city := new(City)
-	err := c.BodyParser(city)
+	type insertStruct struct {
+		Name      string `json:"name"`
+		CountryID string `json:"countryID"`
+	}
+	var insertData insertStruct
+	err := c.BodyParser(&insertData)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
+
+	city := new(City)
+	city.Name = insertData.Name
+	currentCountry, _ := country.GetSingleFromDB(insertData.CountryID)
+
+	if currentCountry.ID == 0 {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Country not found", "data": err})
+	}
+
+	city.Country = *currentCountry
+
 	err = CreateInDB(city)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create City", "data": err})
@@ -36,7 +54,7 @@ func Create(c *fiber.Ctx) error {
 }
 
 func Update(c *fiber.Ctx) error {
-	type updateCity struct {
+	type updateStruct struct {
 		Name string `json:"name"`
 	}
 	id := c.Params("id")
@@ -46,13 +64,13 @@ func Update(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "City not found", "data": err})
 	}
 
-	var updateCityData updateCity
-	err = c.BodyParser(&updateCityData)
+	var updateData updateStruct
+	err = c.BodyParser(&updateData)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
-	city.Name = updateCityData.Name
+	city.Name = updateData.Name
 	err = UpdateInDB(city)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "City has not updated", "data": err})

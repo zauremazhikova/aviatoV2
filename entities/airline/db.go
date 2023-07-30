@@ -60,7 +60,7 @@ func CreateInDB(airline *Airline) error {
 
 func UpdateInDB(airline *Airline) error {
 	db := database.DB()
-	_, dbErr := db.Query("UPDATE airlines SET name = $1, updated_at = $2 WHERE id = $3", airline.Name, time.Now(), airline.ID)
+	_, dbErr := db.Query("UPDATE airlines SET name = $2, updated_at = $3 WHERE id = $1", airline.ID, airline.Name, time.Now())
 
 	if dbErr != nil {
 		return dbErr

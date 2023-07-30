@@ -4,6 +4,8 @@ import (
 	"aviatoV2/entities/airline"
 	"aviatoV2/entities/city"
 	"aviatoV2/entities/country"
+	"aviatoV2/entities/direction"
+	"aviatoV2/entities/passenger"
 	"aviatoV2/handlers"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,12 +17,11 @@ func SetupRoutes(app *fiber.App) {
 	airlines := api.Group("/airline")
 	countries := api.Group("/country")
 	cities := api.Group("/city")
+	passengers := api.Group("/passenger")
+	directions := api.Group("/direction")
 
 	/*	booking := api.Group("/booking")
-
-		flight := api.Group("/flight")
-		passenger := api.Group("/passenger")
-		route := api.Group("/route")*/
+		flight := api.Group("/flight")*/
 
 	// main
 	api.Get("/", handlers.GetAllFlights)
@@ -46,41 +47,18 @@ func SetupRoutes(app *fiber.App) {
 	cities.Put("/:id", city.Update)
 	cities.Delete("/:id", city.Delete)
 
-	/*
+	// passenger
+	passengers.Get("/", passenger.GetAll)
+	passengers.Get("/:id", passenger.GetSingle)
+	passengers.Post("/", passenger.Create)
+	passengers.Put("/:id", passenger.Update)
+	passengers.Delete("/:id", passenger.Delete)
 
-		// passenger
-		passenger.Get("/", Entities.GetAllPassengers)
-		passenger.Get("/:id", Entities.GetSinglePassenger)
-		passenger.Post("/", Entities.CreatePassenger)
-		passenger.Put("/:id", Entities.UpdatePassenger)
-		passenger.Delete("/:id", Entities.DeletePassengerByID)
-
-		// route
-		route.Get("/", Entities.GetAllRoutes)
-		route.Get("/:id", Entities.GetSingleRoute)
-		route.Post("/", Entities.CreateRoute)
-		route.Put("/:id", Entities.UpdateRoute)
-		route.Delete("/:id", Entities.DeleteRouteByID)
-
-		// flight
-		flight.Get("/", Entities.GetAllFlights)
-		flight.Get("/:id", Entities.GetSingleFlight)
-		flight.Post("/", Entities.CreateFlight)
-		flight.Put("/:id", Entities.UpdateFlight)
-		flight.Delete("/:id", Entities.DeleteFlightByID)
-
-		// booking
-		booking.Get("/", Entities.GetAllBookings)
-		booking.Get("/:id", Entities.GetSingleBooking)
-		booking.Post("/", Entities.CreateBooking)
-		booking.Put("/:id", Entities.UpdateBooking)
-		booking.Delete("/:id", Entities.DeleteBookingByID)
-
-		// booking Status
-		bookingStatus.Get("/", Entities.GetAllBookingStatuses)
-		bookingStatus.Get("/:id", Entities.GetSingleBookingStatus)
-		bookingStatus.Post("/", Entities.CreateBookingStatus)
-		bookingStatus.Put("/:id", Entities.UpdateBookingStatus)
-		bookingStatus.Delete("/:id", Entities.DeleteBookingStatusByID)*/
+	// direction
+	directions.Get("/", direction.GetAll)
+	directions.Get("/:id", direction.GetSingle)
+	directions.Post("/", direction.Create)
+	directions.Put("/:id", direction.Update)
+	directions.Delete("/:id", direction.Delete)
 
 }
