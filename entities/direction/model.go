@@ -7,7 +7,7 @@ import (
 )
 
 type Direction struct {
-	ID              int             `json:"id"`
+	ID              string          `json:"id"`
 	OriginCity      city.City       `json:"originCity"`
 	DestinationCity city.City       `json:"destinationCity"`
 	Airline         airline.Airline `json:"airline"`

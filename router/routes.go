@@ -8,7 +8,6 @@ import (
 	"aviatoV2/entities/direction"
 	"aviatoV2/entities/flight"
 	"aviatoV2/entities/passenger"
-	"aviatoV2/handlers"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -25,7 +24,7 @@ func SetupRoutes(app *fiber.App) {
 	bookings := api.Group("/booking")
 
 	// main
-	api.Get("/", handlers.GetAllFlights)
+	//api.Get("/", handlers.GetAllFlights)
 
 	// airline
 	airlines.Get("/", airline.GetAll)

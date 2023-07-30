@@ -5,7 +5,7 @@ import (
 )
 
 type Passenger struct {
-	ID        int       `json:"id"`
+	ID        string    `json:"id"`
 	Name      string    `json:"name"`
 	Passport  string    `json:"passport"`
 	CreatedAt time.Time `json:"created_at"`

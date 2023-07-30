@@ -67,7 +67,7 @@ func Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	country, err := GetSingleFromDB(id)
 
-	if country.ID == 0 {
+	if country.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Country not found", "data": nil})
 	}
 

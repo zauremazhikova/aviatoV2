@@ -12,6 +12,7 @@ func GetAllFromDB() (a []*Airline, err error) {
 	db := database.DB()
 	rows, dbErr := db.Query("SELECT ID, NAME, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM airlines")
 	if dbErr != nil {
+		db.Close()
 		log.Fatal(dbErr)
 	}
 
@@ -24,7 +25,7 @@ func GetAllFromDB() (a []*Airline, err error) {
 			airlines = append(airlines, &airline)
 		}
 	}
-
+	db.Close()
 	return airlines, nil
 }
 
@@ -33,6 +34,7 @@ func GetSingleFromDB(id string) (*Airline, error) {
 	db := database.DB()
 	rows, dbErr := db.Query("SELECT ID, NAME, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM airlines WHERE ID = $1", id)
 	if dbErr != nil {
+		db.Close()
 		log.Fatal(dbErr)
 	}
 
@@ -43,8 +45,8 @@ func GetSingleFromDB(id string) (*Airline, error) {
 			return &Airline{}, err
 		}
 	}
+	db.Close()
 	return &airline, nil
-
 }
 
 func CreateInDB(airline *Airline) error {
@@ -52,8 +54,10 @@ func CreateInDB(airline *Airline) error {
 	_, dbErr := db.Query("INSERT INTO airlines (name, created_at) VALUES ($1, $2)", airline.Name, time.Now())
 
 	if dbErr != nil {
+		db.Close()
 		return dbErr
 	} else {
+		db.Close()
 		return nil
 	}
 }
@@ -63,8 +67,10 @@ func UpdateInDB(airline *Airline) error {
 	_, dbErr := db.Query("UPDATE airlines SET name = $2, updated_at = $3 WHERE id = $1", airline.ID, airline.Name, time.Now())
 
 	if dbErr != nil {
+		db.Close()
 		return dbErr
 	} else {
+		db.Close()
 		return nil
 	}
 }
@@ -74,8 +80,10 @@ func DeleteInDB(id string) error {
 	_, dbErr := db.Query("UPDATE airlines SET deleted_at = $1 WHERE id = $2", time.Now(), id)
 
 	if dbErr != nil {
+		db.Close()
 		return dbErr
 	} else {
+		db.Close()
 		return nil
 	}
 }

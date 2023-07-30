@@ -95,7 +95,7 @@ func Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	direction, err := GetSingleFromDB(id)
 
-	if direction.ID == 0 {
+	if direction.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Direction not found", "data": nil})
 	}
 

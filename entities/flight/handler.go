@@ -42,7 +42,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	currentDirection, _ := direction.GetSingleFromDB(insertData.DirectionID)
-	if currentDirection.ID == 0 {
+	if currentDirection.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Direction not found", "data": err})
 	}
 
@@ -84,7 +84,7 @@ func Update(c *fiber.Ctx) error {
 	}
 
 	currentDirection, _ := direction.GetSingleFromDB(updateData.DirectionID)
-	if currentDirection.ID == 0 {
+	if currentDirection.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Direction not found", "data": err})
 	}
 
@@ -107,7 +107,7 @@ func Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	flight, err := GetSingleFromDB(id)
 
-	if flight.ID == 0 {
+	if flight.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight not found", "data": nil})
 	}
 

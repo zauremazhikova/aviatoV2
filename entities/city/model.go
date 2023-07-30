@@ -6,7 +6,7 @@ import (
 )
 
 type City struct {
-	ID        int             `json:"id"`
+	ID        string          `json:"id"`
 	Name      string          `json:"name"`
 	Country   country.Country `json:"country"`
 	CreatedAt time.Time       `json:"created_at"`

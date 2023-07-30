@@ -37,7 +37,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	currentCountry, _ := country.GetSingleFromDB(insertData.CountryID)
-	if currentCountry.ID == 0 {
+	if currentCountry.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Country not found", "data": err})
 	}
 
@@ -71,7 +71,7 @@ func Update(c *fiber.Ctx) error {
 	}
 
 	currentCountry, _ := country.GetSingleFromDB(updateData.CountryID)
-	if currentCountry.ID == 0 {
+	if currentCountry.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Country not found", "data": err})
 	}
 
@@ -90,7 +90,7 @@ func Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	city, err := GetSingleFromDB(id)
 
-	if city.ID == 0 {
+	if city.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "City not found", "data": nil})
 	}
 

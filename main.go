@@ -21,6 +21,6 @@ func main() {
 	if err := app.Listen(":3000"); err != nil {
 		log.Fatal(err)
 	}
-	//a, err := airline.FindOne("4")
-	//fmt.Println(a, err)
+
+	//handlers.FindFlightVariants()
 }

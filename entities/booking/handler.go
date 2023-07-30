@@ -39,12 +39,12 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	currentFlight, _ := flight.GetSingleFromDB(insertData.FlightID)
-	if currentFlight.ID == 0 {
+	if currentFlight.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight not found", "data": err})
 	}
 
 	currentPassenger, _ := passenger.GetSingleFromDB(insertData.PassengerID)
-	if currentPassenger.ID == 0 {
+	if currentPassenger.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Passenger not found", "data": err})
 	}
 
@@ -80,12 +80,12 @@ func Update(c *fiber.Ctx) error {
 	}
 
 	currentFlight, _ := flight.GetSingleFromDB(updateData.FlightID)
-	if currentFlight.ID == 0 {
+	if currentFlight.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight not found", "data": err})
 	}
 
 	currentPassenger, _ := passenger.GetSingleFromDB(updateData.PassengerID)
-	if currentPassenger.ID == 0 {
+	if currentPassenger.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Passenger not found", "data": err})
 	}
 
@@ -105,7 +105,7 @@ func Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	booking, err := GetSingleFromDB(id)
 
-	if booking.ID == 0 {
+	if booking.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Booking not found", "data": nil})
 	}
 

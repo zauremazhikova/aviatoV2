@@ -6,7 +6,7 @@ import (
 )
 
 type Flight struct {
-	ID            int                 `json:"id"`
+	ID            string              `json:"id"`
 	FlightNumber  string              `json:"flightNumber"`
 	Direction     direction.Direction `json:"direction"`
 	DepartureTime time.Time           `json:"departureTime"`

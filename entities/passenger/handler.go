@@ -1,6 +1,8 @@
 package passenger
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 func GetAll(c *fiber.Ctx) error {
 
@@ -65,7 +67,7 @@ func Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	passenger, err := GetSingleFromDB(id)
 
-	if passenger.ID == 0 {
+	if passenger.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Passenger not found", "data": nil})
 	}
 

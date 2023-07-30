@@ -67,7 +67,7 @@ func Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	airline, err := GetSingleFromDB(id)
 
-	if airline.ID == 0 {
+	if airline.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Airline not found", "data": nil})
 	}
 
