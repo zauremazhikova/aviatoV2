@@ -150,6 +150,17 @@ insert into public.directions
 from (Select id from public.cities where name = 'Istanbul') as origin,
      (Select id from public.cities where name = 'Astana') as destination,
      (Select id from public.airlines where name = 'Turkish Airlines') as airline;
+insert into public.directions
+(origin_city_id, destination_city_id, airline_id, created_at) Select origin.id, destination.id, airline.id, current_timestamp
+from (Select id from public.cities where name = 'Ankara') as origin,
+     (Select id from public.cities where name = 'Antalya') as destination,
+     (Select id from public.airlines where name = 'Turkish Airlines') as airline;
+insert into public.directions
+(origin_city_id, destination_city_id, airline_id, created_at) Select origin.id, destination.id, airline.id, current_timestamp
+from (Select id from public.cities where name = 'Antalya') as origin,
+     (Select id from public.cities where name = 'Istanbul') as destination,
+     (Select id from public.airlines where name = 'Turkish Airlines') as airline;
+
 
 --flights
 insert into public.flights (flight_number, direction_id, departure_time, arrival_time, seats_number, price, created_at)
@@ -168,6 +179,11 @@ insert into public.flights (flight_number, direction_id, departure_time, arrival
 values ('A354', 7, date('2023-09-18 10:00:00'), date('2023-09-18 19:00:00'), 90, 180000, current_timestamp);
 insert into public.flights (flight_number, direction_id, departure_time, arrival_time, seats_number, price, created_at)
 values ('A745', 8, date('2023-09-23 10:00:00'), date('2023-09-23 19:00:00'), 180, 150000, current_timestamp);
+insert into public.flights (flight_number, direction_id, departure_time, arrival_time, seats_number, price, created_at)
+values ('A798', 9, date('2023-09-30 21:00:00'), date('2023-09-30 23:00:00'), 180, 50000, current_timestamp);
+insert into public.flights (flight_number, direction_id, departure_time, arrival_time, seats_number, price, created_at)
+values ('A545', 10, date('2023-10-01 03:00:00'), date('2023-10-30 05:00:00'), 180, 30000, current_timestamp);
+
 
 --bookings
 insert into public.bookings (booking_number, flight_id, passenger_id, created_at) values ('AT8745744', 1, 1, current_timestamp);
@@ -223,4 +239,3 @@ insert into public.bookings (booking_number, flight_id, passenger_id, created_at
 insert into public.bookings (booking_number, flight_id, passenger_id, created_at) values ('KC83E84RE', 6, 6, current_timestamp);
 insert into public.bookings (booking_number, flight_id, passenger_id, created_at) values ('ID8934E84', 6, 7, current_timestamp);
 insert into public.bookings (booking_number, flight_id, passenger_id, created_at) values ('JE2893813', 6, 8, current_timestamp);
-

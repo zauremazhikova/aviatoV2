@@ -1,6 +1,13 @@
 package handlers
 
-/*
+import (
+	"aviatoV2/config"
+	"aviatoV2/entities/flight"
+	"fmt"
+	"github.com/gofiber/fiber/v2"
+	"time"
+)
+
 var FlightsMap [][]*flight.Flight
 
 func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
@@ -23,33 +30,35 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 	return nil
 }
 
-
 func FindFlightVariants() {
 
 	flights := make([]*flight.Flight, 0)
-	findFlightVariants("1", "3", config.FlightStopMaxNumber, flights)
-	fmt.Println(FlightsMap)
+	res := findFlightVariants("1", "3", config.FlightStopMaxNumber, flights)
+	fmt.Println(FlightsMap, res)
+
 }
 
-func findFlightVariants(originCityID string, destinationCityID string, stops int, flights []*flight.Flight) {
+func findFlightVariants(originCityID string, destinationCityID string, stops int, flights []*flight.Flight) bool {
 
-		currOriginCity, _ := flight.GetSingleFromDB(originCityID)
-		flights = append(flights, currOriginCity)
+	if originCityID == destinationCityID {
+		return true
+	} else if stops <= 0 {
+		return false
+	}
 
-		if originCityID == destinationCityID {
+	nextFlights, err := flight.GetFlightsByOriginCityFromDB(originCityID)
+	if err != nil {
+		return false
+	}
+
+	for i := 0; i < len(nextFlights); i++ {
+		currentFlight := nextFlights[i]
+		flights = append(flights, currentFlight)
+		res := findFlightVariants(currentFlight.Direction.DestinationCity.ID, destinationCityID, stops-1, flights)
+		if res == true {
 			FlightsMap = append(FlightsMap, flights)
-			return
-		} else if stops <= 0 {
-			return
 		}
+	}
+	return false
 
-		nextFlights, err := flight.GetFlightsByOriginCityFromDB(originCityID)
-		if err != nil {
-			return
-		}
-
-		for i := 0; i < len(nextFlights); i++ {
-			findFlightVariants(nextFlights[i].Direction.DestinationCity.ID, destinationCityID, stops-1, flights)
-		}*
-	return
-}*/
+}
