@@ -39,7 +39,7 @@ func GetAllFromDB() (a []*Booking, err error) {
 	return bookings, nil
 }
 
-func GetByFlightIDFromDB(flightID string) (a []*Booking, err error) {
+func GetBookingsByFlightIDFromDB(flightID string) (a []*Booking, err error) {
 	bookings := make([]*Booking, 0)
 
 	db := database.DB()

@@ -23,7 +23,7 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 	}
 
 	flightsMap = make([][]*flight.Flight, 0)
-	findFlightVariants(searchData.OriginCityID, searchData.DestinationCityID, config.FlightStopMaxNumber, make([]*flight.Flight, 0), make([]string, 0))
+	findFlightsDFS(searchData.OriginCityID, searchData.DestinationCityID, config.FlightStopMaxNumber, make([]*flight.Flight, 0), make([]string, 0))
 
 	if len(flightsMap) == 0 {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flights not found", "data": flightsMap})
@@ -31,7 +31,7 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Flights Found", "data": flightsMap})
 }
 
-func findFlightVariants(originCityID string, destinationCityID string, stops int, flights []*flight.Flight, citiesID []string) {
+func findFlightsDFS(originCityID string, destinationCityID string, stops int, flights []*flight.Flight, citiesID []string) {
 
 	contains := slices.Contains(citiesID, originCityID)
 
@@ -52,7 +52,7 @@ func findFlightVariants(originCityID string, destinationCityID string, stops int
 		currentFlight := nextFlights[i]
 		flights = append(flights, currentFlight)
 		citiesID = append(citiesID, originCityID)
-		findFlightVariants(currentFlight.Direction.DestinationCity.ID, destinationCityID, stops-1, flights, citiesID)
+		findFlightsDFS(currentFlight.Direction.DestinationCity.ID, destinationCityID, stops-1, flights, citiesID)
 		flights = flights[:len(flights)-1]
 	}
 	return

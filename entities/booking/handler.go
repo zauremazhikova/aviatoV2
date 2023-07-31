@@ -125,7 +125,7 @@ func Delete(c *fiber.Ctx) error {
 
 func CheckFlightBookingAvailability(flight *flight.Flight) (bool, error) {
 
-	currentBookings, err := GetByFlightIDFromDB(flight.ID)
+	currentBookings, err := GetBookingsByFlightIDFromDB(flight.ID)
 
 	if err != nil {
 		return false, err
