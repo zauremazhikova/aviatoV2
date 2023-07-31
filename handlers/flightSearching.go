@@ -25,6 +25,9 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 	flightsMap = make([][]*flight.Flight, 0)
 	findFlightVariants(searchData.OriginCityID, searchData.DestinationCityID, config.FlightStopMaxNumber, make([]*flight.Flight, 0), make([]string, 0))
 
+	if len(flightsMap) == 0 {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flights not found", "data": flightsMap})
+	}
 	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Flights Found", "data": flightsMap})
 }
 
