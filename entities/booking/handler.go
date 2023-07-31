@@ -3,7 +3,7 @@ package booking
 import (
 	"aviatoV2/entities/flight"
 	"aviatoV2/entities/passenger"
-	"aviatoV2/utils"
+	"errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -44,7 +44,7 @@ func Create(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight not found", "data": err})
 	}
 
-	checkingAvailability, err := utils.CheckFlightBookingAvailability(currentFlight)
+	checkingAvailability, err := CheckFlightBookingAvailability(currentFlight)
 	if checkingAvailability == false {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight is not available", "data": err})
 	}
@@ -121,4 +121,19 @@ func Delete(c *fiber.Ctx) error {
 	}
 
 	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Booking deleted"})
+}
+
+func CheckFlightBookingAvailability(flight *flight.Flight) (bool, error) {
+
+	currentBookings, err := GetByFlightIDFromDB(flight.ID)
+
+	if err != nil {
+		return false, err
+	}
+
+	if flight.SeatsNumber <= len(currentBookings) {
+		return false, errors.New("flight is full")
+	}
+
+	return true, nil
 }
