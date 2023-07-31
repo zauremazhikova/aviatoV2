@@ -5,6 +5,7 @@ import (
 	"aviatoV2/entities/flight"
 	"github.com/gofiber/fiber/v2"
 	"slices"
+	"time"
 )
 
 var flightsMap [][]*flight.Flight
@@ -12,9 +13,10 @@ var flightsMap [][]*flight.Flight
 func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 
 	type searchStruct struct {
-		OriginCityID        string `json:"OriginCityID"`
-		DestinationCityID   string `json:"DestinationCityID"`
-		FlightStopMaxNumber int    `json:"FlightStopMaxNumber"`
+		OriginCityID        string    `json:"OriginCityID"`
+		DestinationCityID   string    `json:"DestinationCityID"`
+		DepartureTime       time.Time `json:"departureTime"`
+		FlightStopMaxNumber int       `json:"FlightStopMaxNumber"`
 	}
 
 	var searchData searchStruct
@@ -25,7 +27,6 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 
 	// maxStop - это максимальное количество пересадок. Настраивается в config. Но при поиске, пользователь может сам отрегулировать.
 	// Если не регулирует: передается -1
-
 	maxStop := config.FlightStopMaxNumber
 	if searchData.FlightStopMaxNumber != -1 {
 		maxStop = searchData.FlightStopMaxNumber
