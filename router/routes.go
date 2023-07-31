@@ -17,12 +17,12 @@ func SetupRoutes(app *fiber.App) {
 	// grouping
 	api := app.Group("/api")
 	airlines := api.Group("/airline")
-	countries := api.Group("/country")
+	bookings := api.Group("/booking")
 	cities := api.Group("/city")
-	passengers := api.Group("/passenger")
+	countries := api.Group("/country")
 	directions := api.Group("/direction")
 	flights := api.Group("/flight")
-	bookings := api.Group("/booking")
+	passengers := api.Group("/passenger")
 
 	// main
 	api.Get("/", handlers.GetFlightsByOriginAndDestination)
@@ -34,12 +34,12 @@ func SetupRoutes(app *fiber.App) {
 	airlines.Put("/:id", airline.Update)
 	airlines.Delete("/:id", airline.Delete)
 
-	// country
-	countries.Get("/", country.GetAll)
-	countries.Get("/:id", country.GetSingle)
-	countries.Post("/", country.Create)
-	countries.Put("/:id", country.Update)
-	countries.Delete("/:id", country.Delete)
+	// booking
+	bookings.Get("/", booking.GetAll)
+	bookings.Get("/:id", booking.GetSingle)
+	bookings.Post("/", booking.Create)
+	bookings.Put("/:id", booking.Update)
+	bookings.Delete("/:id", booking.Delete)
 
 	// city
 	cities.Get("/", city.GetAll)
@@ -48,12 +48,12 @@ func SetupRoutes(app *fiber.App) {
 	cities.Put("/:id", city.Update)
 	cities.Delete("/:id", city.Delete)
 
-	// passenger
-	passengers.Get("/", passenger.GetAll)
-	passengers.Get("/:id", passenger.GetSingle)
-	passengers.Post("/", passenger.Create)
-	passengers.Put("/:id", passenger.Update)
-	passengers.Delete("/:id", passenger.Delete)
+	// country
+	countries.Get("/", country.GetAll)
+	countries.Get("/:id", country.GetSingle)
+	countries.Post("/", country.Create)
+	countries.Put("/:id", country.Update)
+	countries.Delete("/:id", country.Delete)
 
 	// direction
 	directions.Get("/", direction.GetAll)
@@ -69,11 +69,11 @@ func SetupRoutes(app *fiber.App) {
 	flights.Put("/:id", flight.Update)
 	flights.Delete("/:id", flight.Delete)
 
-	// booking
-	bookings.Get("/", booking.GetAll)
-	bookings.Get("/:id", booking.GetSingle)
-	bookings.Post("/", booking.Create)
-	bookings.Put("/:id", booking.Update)
-	bookings.Delete("/:id", booking.Delete)
+	// passenger
+	passengers.Get("/", passenger.GetAll)
+	passengers.Get("/:id", passenger.GetSingle)
+	passengers.Post("/", passenger.Create)
+	passengers.Put("/:id", passenger.Update)
+	passengers.Delete("/:id", passenger.Delete)
 
 }

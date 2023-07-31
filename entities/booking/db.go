@@ -41,6 +41,38 @@ func GetAllFromDB() (a []*Booking, err error) {
 	return bookings, nil
 }
 
+func GetByFlightIDFromDB(flightID string) (a []*Booking, err error) {
+	bookings := make([]*Booking, 0)
+
+	db := database.DB()
+	rows, dbErr := db.Query("SELECT ID, BOOKING_NUMBER, FLIGHT_ID, PASSENGER_ID, CREATED_AT, COALESCE(UPDATED_AT, DATE('0001-01-01')) AS UPDATED_AT, COALESCE(DELETED_AT, DATE('0001-01-01')) AS DELETED_AT FROM bookings WHERE FLIGHT_ID = $1", flightID)
+	if dbErr != nil {
+		db.Close()
+		log.Fatal(dbErr)
+	}
+
+	for rows.Next() {
+		var booking Booking
+		var flightID string
+		var passengerID string
+		err := rows.Scan(&booking.ID, &booking.BookingNumber, &flightID, &passengerID, &booking.CreatedAt, &booking.UpdatedAt, &booking.DeletedAt)
+		if err != nil {
+			fmt.Println(err)
+			return bookings, err
+		} else {
+			currentFlight, _ := flight.GetSingleFromDB(flightID)
+			booking.Flight = *currentFlight
+
+			currentPassenger, _ := passenger.GetSingleFromDB(passengerID)
+			booking.Passenger = *currentPassenger
+
+			bookings = append(bookings, &booking)
+		}
+	}
+	db.Close()
+	return bookings, nil
+}
+
 func GetSingleFromDB(id string) (*Booking, error) {
 
 	db := database.DB()

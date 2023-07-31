@@ -36,7 +36,7 @@ func Create(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
-	currentCountry, _ := country.GetSingleFromDB(insertData.CountryID)
+	currentCountry, err := country.GetSingleFromDB(insertData.CountryID)
 	if currentCountry.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Country not found", "data": err})
 	}

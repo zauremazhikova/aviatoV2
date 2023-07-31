@@ -41,7 +41,7 @@ func Create(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
-	currentDirection, _ := direction.GetSingleFromDB(insertData.DirectionID)
+	currentDirection, err := direction.GetSingleFromDB(insertData.DirectionID)
 	if currentDirection.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Direction not found", "data": err})
 	}

@@ -3,6 +3,7 @@ package booking
 import (
 	"aviatoV2/entities/flight"
 	"aviatoV2/entities/passenger"
+	"aviatoV2/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -43,7 +44,12 @@ func Create(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight not found", "data": err})
 	}
 
-	currentPassenger, _ := passenger.GetSingleFromDB(insertData.PassengerID)
+	checkingAvailability, err := utils.CheckFlightBookingAvailability(currentFlight)
+	if checkingAvailability == false {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight is not available", "data": err})
+	}
+
+	currentPassenger, err := passenger.GetSingleFromDB(insertData.PassengerID)
 	if currentPassenger.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Passenger not found", "data": err})
 	}
@@ -79,12 +85,12 @@ func Update(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
-	currentFlight, _ := flight.GetSingleFromDB(updateData.FlightID)
+	currentFlight, err := flight.GetSingleFromDB(updateData.FlightID)
 	if currentFlight.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Flight not found", "data": err})
 	}
 
-	currentPassenger, _ := passenger.GetSingleFromDB(updateData.PassengerID)
+	currentPassenger, err := passenger.GetSingleFromDB(updateData.PassengerID)
 	if currentPassenger.ID == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Passenger not found", "data": err})
 	}
