@@ -13,10 +13,9 @@ var flightsMap [][]*flight.Flight
 func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 
 	type searchStruct struct {
-		OriginCityID        string    `json:"OriginCityID"`
-		DestinationCityID   string    `json:"DestinationCityID"`
-		DepartureTime       time.Time `json:"departureTime"`
-		FlightStopMaxNumber int       `json:"FlightStopMaxNumber"`
+		OriginCityID      string    `json:"OriginCityID"`
+		DestinationCityID string    `json:"DestinationCityID"`
+		DepartureTime     time.Time `json:"departureTime"`
 	}
 
 	var searchData searchStruct
@@ -25,12 +24,8 @@ func GetFlightsByOriginAndDestination(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 
-	// maxStop - это максимальное количество пересадок. Настраивается в config. Но при поиске, пользователь может сам отрегулировать.
-	// Если не регулирует: передается -1
+	// maxStop - это максимальное количество пересадок. Настраивается в config.
 	maxStop := config.FlightStopMaxNumber
-	if searchData.FlightStopMaxNumber != -1 {
-		maxStop = searchData.FlightStopMaxNumber
-	}
 
 	flightsMap = make([][]*flight.Flight, 0)
 	findFlightsDFS(searchData.OriginCityID, searchData.DestinationCityID, maxStop, make([]*flight.Flight, 0), make([]string, 0))
@@ -48,7 +43,7 @@ func findFlightsDFS(originCityID string, destinationCityID string, stops int, fl
 	if originCityID == destinationCityID {
 		flightsMap = append(flightsMap, flights)
 		return
-	} else if stops < 0 || contains == true {
+	} else if stops <= 0 || contains == true {
 		flights = nil
 		return
 	}
